@@ -1,0 +1,59 @@
+require 'rubygems'
+require 'rake'
+require 'rake/clean'
+
+NCMPCPP_BIN = "../src/ncmpcpp"
+PND = "ncmpcpp4P.pnd"
+PND_SOURCE_DIR = "ncmpcpp4P"
+PND_PXML = File.join(PND_SOURCE_DIR, "PXML.xml")
+PND_NCMPCPP_BIN = File.join(PND_SOURCE_DIR, "bin/ncmpcpp4P")
+PND_MPD_BIN = File.join(PND_SOURCE_DIR, "bin/mpd")
+PND_LIB_PATH = File.join(PND_SOURCE_DIR, "lib")
+PND_MAKE_PATH = "/usr/pandora/scripts/pnd_make.sh"
+PXML = File.join(PND_SOURCE_DIR, "PXML.xml")
+ICON = File.join(PND_SOURCE_DIR, "icon.png")
+NAND_PATHS = ["/media/nand/lib/", "/media/nand/usr/lib"]
+
+CLOBBER.include("*.pnd", "pnd_make.sh", PND_NCMPCPP_BIN, PND_LIB_PATH)
+
+def check_ldd(binary_fn)
+  FileUtils.mkdir(PND_LIB_PATH) unless File.exists?(PND_LIB_PATH)
+  ldd_output = `ldd #{binary_fn}`.split("\n")
+  ldd_output.each do |line|
+    line.strip!
+    splits = line.split('=>')
+    unless splits[1].nil?
+      path = splits[1].gsub(/\(0x(.*)/, '').strip
+      NAND_PATHS.each_with_index do |nand_path, i|
+        nand_fn = File.join(nand_path, File.basename(path)).strip
+        if File.exists?(nand_fn)
+          break
+        else
+          FileUtils.cp_r(path, PND_LIB_PATH, :verbose => true) unless File.exists?(nand_fn) if i == 1
+        end
+      end
+    end
+  end
+end
+
+file PND_LIB_PATH => NCMPCPP_BIN do
+  [PND_MPD_BIN, PND_NCMPCPP_BIN].each { |fn| check_ldd(fn) }
+end
+
+file PND_NCMPCPP_BIN => NCMPCPP_BIN do
+  cp NCMPCPP_BIN, PND_NCMPCPP_BIN, :verbose => true
+end
+
+file "pnd_make.sh" do
+  cp PND_MAKE_PATH, "./", :verbose => true
+  sh "chmod +x pnd_make.sh"
+end
+
+desc "Create the pnd package"
+file PND => ["pnd_make.sh", PND_PXML, PND_NCMPCPP_BIN, PND_LIB_PATH] do
+  sh "./pnd_make.sh -d #{PND_SOURCE_DIR} -p #{PND} -x #{PXML} -i #{ICON} -c"
+end
+
+task :default => PND
+
+
