@@ -1,11 +1,12 @@
 require 'rubygems'
 require 'rake'
 require 'rake/clean'
+require './helpers'
 
 NCMPCPP_BIN = "../src/ncmpcpp"
-PND = "ncmpcpp4P.pnd"
 PND_SOURCE_DIR = "ncmpcpp4P"
 PND_PXML = File.join(PND_SOURCE_DIR, "PXML.xml")
+PND = "ncmpcpp4P_v#{pnd_version(PND_PXML).join('.')}.pnd"
 PND_NCMPCPP_BIN = File.join(PND_SOURCE_DIR, "bin/ncmpcpp4P")
 PND_MPD_BIN = File.join(PND_SOURCE_DIR, "bin/mpd")
 PND_LIB_PATH = File.join(PND_SOURCE_DIR, "lib")
@@ -17,26 +18,6 @@ ICON = File.join(PND_SOURCE_DIR, "icon.png")
 NAND_PATHS = ["/media/nand/lib/", "/media/nand/usr/lib"]
 
 CLOBBER.include("*.pnd", "pnd_make.sh", PND_NCMPCPP_BIN, PND_LIB_PATH)
-
-def check_ldd(binary_fn)
-  FileUtils.mkdir(PND_LIB_PATH) unless File.exists?(PND_LIB_PATH)
-  ldd_output = `ldd #{binary_fn}`.split("\n")
-  ldd_output.each do |line|
-    line.strip!
-    splits = line.split('=>')
-    unless splits[1].nil?
-      path = splits[1].gsub(/\(0x(.*)/, '').strip
-      NAND_PATHS.each_with_index do |nand_path, i|
-        nand_fn = File.join(nand_path, File.basename(path)).strip
-        if File.exists?(nand_fn)
-          break
-        else
-          FileUtils.cp_r(path, PND_LIB_PATH, :verbose => true) unless File.exists?(nand_fn) if i == 1
-        end
-      end
-    end
-  end
-end
 
 file PND_LIB_PATH => NCMPCPP_BIN do
   [PND_MPD_BIN, PND_NCMPCPP_BIN].each { |fn| check_ldd(fn) }
