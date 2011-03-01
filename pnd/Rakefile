@@ -9,7 +9,9 @@ PND_PXML = File.join(PND_SOURCE_DIR, "PXML.xml")
 PND_NCMPCPP_BIN = File.join(PND_SOURCE_DIR, "bin/ncmpcpp4P")
 PND_MPD_BIN = File.join(PND_SOURCE_DIR, "bin/mpd")
 PND_LIB_PATH = File.join(PND_SOURCE_DIR, "lib")
+PND_SH = File.join(PND_SOURCE_DIR, "ncmpcpp4P.sh")
 PND_MAKE_PATH = "/usr/pandora/scripts/pnd_make.sh"
+PND_DOC = File.join(PND_SOURCE_DIR, "port-documentation.html")
 PXML = File.join(PND_SOURCE_DIR, "PXML.xml")
 ICON = File.join(PND_SOURCE_DIR, "icon.png")
 NAND_PATHS = ["/media/nand/lib/", "/media/nand/usr/lib"]
@@ -50,7 +52,8 @@ file "pnd_make.sh" do
 end
 
 desc "Create the pnd package"
-file PND => ["pnd_make.sh", PND_PXML, PND_NCMPCPP_BIN, PND_LIB_PATH] do
+file PND => ["pnd_make.sh", PND_PXML, PND_NCMPCPP_BIN, PND_LIB_PATH, PND_SH, 
+PND_DOC] do
   sh "./pnd_make.sh -d #{PND_SOURCE_DIR} -p #{PND} -x #{PXML} -i #{ICON} -c"
 end
 

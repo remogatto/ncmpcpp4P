@@ -18,7 +18,7 @@ curr_path=`cd ./; pwd`
 sed_pattern=`printf "s@~/@${curr_path}/@"`
 
 # Generate an mpd.conf from the template if it doesn't exist
-if [!-f mpd.conf]; then
+if [[ ! -f mpd.conf ]]; then
     sed -e $sed_pattern mpd.conf.template > mpd.conf
 fi
 
@@ -35,7 +35,7 @@ killall -9 mpd
 
 # Start a terminal running ncmpcpp
 terminal_opts=`cat terminal.opts`
-/usr/bin/terminal $terminal_opts -x $curr_path/bin/ncmpcpp
+/usr/bin/terminal $terminal_opts -x $curr_path/bin/ncmpcpp4P
 
 # Kill the mpd daemon on exit
 killall -9 mpd

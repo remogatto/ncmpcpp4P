@@ -13,7 +13,8 @@
     <exec command="./ncmpcpp4P.sh" background="true" standalone="true" /> 
     <author name="Andrzej Rybczak" 
 	    website="http://unkart.ovh.org/ncmpcpp/"/> 
-    <icon src="icon.png" /> 
+    <icon src="icon.png" />
+    <info name="ncmpcpp4P setup" Type="text/html" src="port-documentation.html"/>
     <categories>
       <category name="Audio">
 	<subcategory name="Player" /> 
