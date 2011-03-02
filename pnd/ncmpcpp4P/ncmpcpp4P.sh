@@ -17,14 +17,28 @@ curr_path=`cd ./; pwd`
 # Compose a sed pattern
 sed_pattern=`printf "s@~/@${curr_path}/@"`
 
+# Create the directory structure
+mkdir music
+mkdir playlists
+mkdir .ncmpcpp
+
 # Generate an mpd.conf from the template if it doesn't exist
 if [[ ! -f mpd.conf ]]; then
     sed -e $sed_pattern mpd.conf.template > mpd.conf
 fi
 
-# Create the directory structure
-mkdir music
-mkdir playlists
+# Emerge terminal.opts config file
+if [[ ! -f terminal.opts ]]; then
+    cp terminal.opts.template terminal.opts
+fi
+
+# Emerge ncmpcpp config files in the appdata folder
+if [[ ! -f .ncmpcpp/config ]]; then
+    cp config.template .ncmpcpp/config
+fi
+if [[ ! -f .ncmpcpp/keys ]]; then
+    cp keys.template .ncmpcpp/keys
+fi
 
 # Now we need to launch both mpd and ncmpcpp but before we kill all
 # previous mpd instances
@@ -34,11 +48,11 @@ killall -9 mpd
 ./bin/mpd --verbose --create-db --stdout mpd.conf
 
 # Start a terminal running ncmpcpp
-terminal_opts=`cat terminal.opts`
-/usr/bin/terminal $terminal_opts -x $curr_path/bin/ncmpcpp4P
+/usr/bin/terminal `cat terminal.opts` -x $curr_path/bin/ncmpcpp4P
 
 # Kill the mpd daemon on exit
-killall -9 mpd
+kill `cat pid`
+
 
 
 
