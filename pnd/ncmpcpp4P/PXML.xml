@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <PXML xmlns="http://openpandora.org/namespaces/PXML">
   <application id="ncmpcpp4P.remogatto" appdata="ncmpcpp4P.remogatto">
-    <title lang="en_US">ncmpcpp</title> 
+    <title lang="en_US">ncmpcpp4P</title> 
     <description lang="en_US">
       Ncmpcpp has UI very similar to ncmpc's one, but it provides new 
       useful features such as support for regular expressions in search 
@@ -9,7 +9,7 @@
       ability to sort playlist, local filesystem browser and other minor 
       functions.
     </description> 
-    <version major="0" minor="5" release="7" build="0" /> 
+    <version major="0" minor="5" release="7" build="1" /> 
     <exec command="./ncmpcpp4P.sh" background="true" standalone="true" /> 
     <author name="Andrzej Rybczak" 
 	    website="http://unkart.ovh.org/ncmpcpp/"/> 

@@ -6,7 +6,7 @@ def check_ldd(binary_fn)
     splits = line.split('=>')
     unless splits[1].nil?
       path = splits[1].gsub(/\(0x(.*)/, '').strip
-      NAND_PATHS.each_with_index do |nand_path, i|
+      NAND_LIB_PATHS.each_with_index do |nand_path, i|
         nand_fn = File.join(nand_path, File.basename(path)).strip
         if File.exists?(nand_fn)
           break
